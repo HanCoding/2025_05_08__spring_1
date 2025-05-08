@@ -8,9 +8,6 @@ import jakarta.persistence.Id
 
 @Entity
 class Member(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
     @Column(nullable = false, unique = true)
     val username: String,
     @Column(nullable = false)
@@ -18,4 +15,11 @@ class Member(
     @Column(nullable = false)
     var name: String,
 ) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0
+
+    override fun toString(): String {
+        return "Member(username='$username', password='$password', name='$name')"
+    }
 }
