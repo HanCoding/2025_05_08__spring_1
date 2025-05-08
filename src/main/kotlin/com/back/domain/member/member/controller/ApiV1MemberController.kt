@@ -13,7 +13,9 @@ public class ApiV1MemberController(
 ) {
 
     @GetMapping("/me")
-    fun me(): MemberDto{
-        return memberService.findByUsername()
+    fun me(): MemberDto {
+        return memberService.findByUsername("user1")!!.let {
+            MemberDto(it)
+        }
     }
 }
