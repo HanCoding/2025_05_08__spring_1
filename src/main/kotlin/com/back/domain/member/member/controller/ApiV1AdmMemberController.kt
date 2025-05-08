@@ -1,20 +1,21 @@
 package com.back.domain.member.member.controller;
 
 import com.back.domain.member.member.dto.MemberDto
+import com.back.domain.member.member.service.MemberService
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/adm/members")
-public class ApiV1AdmMemberController {
+public class ApiV1AdmMemberController(
+    private val memberService: MemberService
+) {
 
     @GetMapping("/me")
     fun items(): List<MemberDto>{
-        return listOf(
-            MemberDto(1L, "John"),
-            MemberDto(2L, "John"),
-            MemberDto(3L, "John")
-        )
+        return memberService.findAll().map {
+            MemberDto(it)
+        }
     }
 }
