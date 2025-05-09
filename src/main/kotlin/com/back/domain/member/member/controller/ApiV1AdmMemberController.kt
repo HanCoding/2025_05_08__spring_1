@@ -3,6 +3,7 @@ package com.back.domain.member.member.controller;
 import com.back.domain.member.member.dto.MemberWithUsernameDto
 import com.back.domain.member.member.service.MemberService
 import com.back.standard.extensions.getOrThrow
+import com.back.standard.search.MemberSearchKeywordTypeV1
 import org.springframework.data.domain.Page
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,6 +20,7 @@ public class ApiV1AdmMemberController(
 
     @GetMapping
     fun items(
+        @RequestParam(defaultValue = "all") searchKeywordType: MemberSearchKeywordTypeV1,
         @RequestParam(defaultValue = "") searchKeyword: String,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "30") pageSize: Int,
