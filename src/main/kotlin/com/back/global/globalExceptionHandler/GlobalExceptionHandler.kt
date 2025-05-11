@@ -48,12 +48,12 @@ class GlobalExceptionHandler {
     fun handle(ex: MethodArgumentNotValidException): ResponseEntity<RsData<Empty>> {
         val message = ex.bindingResult
             .allErrors
-            .stream()
             .filter { it is FieldError }
             .map { it as FieldError }
             .map { it.field + "-" + it.code + "-" + it.defaultMessage }
-            .sorted(Comparator.comparing { it })
-            .collect(Collectors.joining("\n"))
+            .sorted()
+            .joinToString("\n")
+
 
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)

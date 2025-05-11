@@ -22,7 +22,7 @@ class MemberService (
         val member = Member(
             username = username,
             password = password,
-            name = name
+            nickname = name
         )
         return memberRepository.save(member)
     }
@@ -61,7 +61,7 @@ class MemberService (
 
         when (searchKeywordType) {
             MemberSearchKeywordTypeV1.all -> {
-                return memberRepository.findAllByUsernameContainingOrNameContaining(
+                return memberRepository.findAllByUsernameContainingOrNicknameContaining(
                     searchKeyword,
                     searchKeyword,
                     pageable
@@ -73,7 +73,7 @@ class MemberService (
             }
 
             MemberSearchKeywordTypeV1.nickname -> {
-                return memberRepository.findAllByNameContaining(searchKeyword, pageable)
+                return memberRepository.findAllByNicknameContaining(searchKeyword, pageable)
             }
         }
     }

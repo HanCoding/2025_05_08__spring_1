@@ -49,7 +49,7 @@ public class ApiV1MemberController(
 
         return RsData(
             resultCode = "200-1",
-            msg = "로그인 성공",
+            msg = "${member.nickname}님 환영합니다.",
             data = MemberDto(member)
         )
     }

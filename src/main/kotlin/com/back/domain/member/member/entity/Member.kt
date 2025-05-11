@@ -14,9 +14,9 @@ class Member(
     @Column(nullable = false)
     var password: String,
     @Column(nullable = false)
-    var name: String,
+    var nickname: String,
 ) : BaseTime(){
     override fun toString(): String {
-        return "Member(username='$username', password='$password', name='$name')"
+        return "Member(username='$username', password='$password', name='$nickname')"
     }
 }
