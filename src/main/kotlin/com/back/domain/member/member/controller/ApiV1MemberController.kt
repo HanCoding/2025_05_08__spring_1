@@ -29,6 +29,11 @@ public class ApiV1MemberController(
         }
     }
 
+    class MemberLoginResBody(
+        val item: MemberDto,
+        val apiKey: String
+    )
+
     class MemberLoginReqBody(
         @field:NotBlank
         val username: String,
@@ -39,7 +44,7 @@ public class ApiV1MemberController(
     @PostMapping("/login")
     fun login(
         @RequestBody @Valid reqBody: MemberLoginReqBody
-    ): RsData<MemberDto> {
+    ): RsData<MemberLoginResBody> {
         val member = memberService.findByUsername(reqBody.username)
             ?: throw ServiceException("400-1", "존재하지 않는 회원입니다.")
 
@@ -50,7 +55,10 @@ public class ApiV1MemberController(
         return RsData(
             resultCode = "200-1",
             msg = "${member.nickname}님 환영합니다.",
-            data = MemberDto(member)
+            data = MemberLoginResBody(
+                item = MemberDto(member),
+                apiKey = member.apiKey
+            )
         )
     }
 }

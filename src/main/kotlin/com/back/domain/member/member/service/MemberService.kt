@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class MemberService (
@@ -22,7 +23,8 @@ class MemberService (
         val member = Member(
             username = username,
             password = password,
-            nickname = name
+            nickname = name,
+            apiKey = UUID.randomUUID().toString()
         )
         return memberRepository.save(member)
     }
