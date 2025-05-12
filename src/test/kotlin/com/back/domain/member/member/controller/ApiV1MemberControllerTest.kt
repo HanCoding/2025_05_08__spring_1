@@ -3,6 +3,7 @@ package com.back.domain.member.member.controller
 import com.back.domain.member.member.service.MemberService
 import com.back.standard.extensions.getOrThrow
 import org.hamcrest.Matchers.startsWith
+import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -75,6 +76,122 @@ class ApiV1MemberControllerTest {
     fun t2() {
         val resultActions = mvc
             .perform(
+                post("/api/v1/members/login-wrong")
+                    .content(
+                        """
+                        {
+                            "username": "user1",
+                            "password": "1234"
+                        }
+                        """.trimIndent()
+                    )
+                    .contentType(
+                        MediaType(APPLICATION_JSON, UTF_8)
+                    )
+            )
+            .andDo(MockMvcResultHandlers.print())
+
+        resultActions
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.resultCode").value("404-1"))
+            .andExpect(jsonPath("$.msg", containsString("해당 엔드포인트는 존재하지 않습니다.")))
+    }
+
+    @Test
+    @DisplayName("로그인 with empty data")
+    fun t3() {
+        val resultActions = mvc
+            .perform(
+                post("/api/v1/members/login")
+                    .content(
+                        """
+                        {
+                            "username": "",
+                            "password": ""
+                        }
+                        """.trimIndent()
+                    )
+                    .contentType(
+                        MediaType(APPLICATION_JSON, UTF_8)
+                    )
+            )
+            .andDo(MockMvcResultHandlers.print())
+
+        resultActions
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.resultCode").value("400-1"))
+            .andExpect(
+                jsonPath(
+                    "$.msg",
+                    containsString("password-NotBlank-must not be blank")
+                )
+            )
+            .andExpect(
+                jsonPath("$.msg", containsString("username-NotBlank-must not be blank")
+                )
+            )
+    }
+
+    @Test
+    @DisplayName("로그인 with wrong username")
+    fun t4() {
+        val resultActions = mvc
+            .perform(
+                post("/api/v1/members/login")
+                    .content(
+                        """
+                        {
+                            "username": "user0",
+                            "password": "1234"
+                        }
+                        """.trimIndent()
+                    )
+                    .contentType(
+                        MediaType(APPLICATION_JSON, UTF_8)
+                    )
+            )
+            .andDo(MockMvcResultHandlers.print())
+
+        resultActions
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().methodName("login"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.resultCode").value("400-1"))
+            .andExpect(jsonPath("$.msg").value("존재하지 않는 회원입니다."))
+    }
+
+    @Test
+    @DisplayName("로그인, no username")
+    fun t5() {
+        val resultActions = mvc
+            .perform(
+                post("/api/v1/members/login")
+                    .content(
+                        """
+                        {
+                            "password": "1234"
+                        }
+                        """.trimIndent()
+                    )
+                    .contentType(
+                        MediaType(APPLICATION_JSON, UTF_8)
+                    )
+            )
+            .andDo(MockMvcResultHandlers.print())
+
+        resultActions
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().methodName("login"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.resultCode").value("400-1"))
+            .andExpect(jsonPath("$.msg", containsString("잘못된 요청입니다.")))
+    }
+
+    @Test
+    @DisplayName("로그인 with empty username")
+    fun t6() {
+        val resultActions = mvc
+            .perform(
                 post("/api/v1/members/login")
                     .content(
                         """
@@ -96,5 +213,88 @@ class ApiV1MemberControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.resultCode").value("400-1"))
             .andExpect(jsonPath("$.msg").value("username-NotBlank-must not be blank"))
+    }
+
+    @Test
+    @DisplayName("로그인 with wrong password")
+    fun t7() {
+        val resultActions = mvc
+            .perform(
+                post("/api/v1/members/login")
+                    .content(
+                        """
+                        {
+                            "username": "user1",
+                            "password": "12345"
+                        }
+                        """.trimIndent()
+                    )
+                    .contentType(
+                        MediaType(APPLICATION_JSON, UTF_8)
+                    )
+            )
+            .andDo(MockMvcResultHandlers.print())
+
+        resultActions
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().methodName("login"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.resultCode").value("400-2"))
+            .andExpect(jsonPath("$.msg").value("비밀번호가 일치하지 않습니다."))
+    }
+
+    @Test
+    @DisplayName("로그인 with no password")
+    fun t8() {
+        val resultActions = mvc
+            .perform(
+                post("/api/v1/members/login")
+                    .content(
+                        """
+                        {
+                            "username": "user1"
+                        }
+                        """.trimIndent()
+                    )
+                    .contentType(
+                        MediaType(APPLICATION_JSON, UTF_8)
+                    )
+            )
+            .andDo(MockMvcResultHandlers.print())
+
+        resultActions
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().methodName("login"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.resultCode").value("400-1"))
+            .andExpect(jsonPath("$.msg", containsString("잘못된 요청입니다.")))
+    }
+
+    @Test
+    @DisplayName("로그인 with empty password")
+    fun t9() {
+        val resultActions = mvc
+            .perform(
+                post("/api/v1/members/login")
+                    .content(
+                        """
+                        {
+                            "username": "user1",
+                            "password": ""
+                        }
+                        """.trimIndent()
+                    )
+                    .contentType(
+                        MediaType(APPLICATION_JSON, UTF_8)
+                    )
+            )
+            .andDo(MockMvcResultHandlers.print())
+
+        resultActions
+            .andExpect(handler().handlerType(ApiV1MemberController::class.java))
+            .andExpect(handler().methodName("login"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.resultCode").value("400-1"))
+            .andExpect(jsonPath("$.msg").value("password-NotBlank-must not be blank"))
     }
 }
