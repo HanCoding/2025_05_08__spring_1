@@ -3,10 +3,13 @@ package com.back.domain.member.member.controller;
 import com.back.domain.member.member.dto.MemberDto
 import com.back.domain.member.member.service.MemberService
 import com.back.global.exception.ServiceException
+import com.back.global.rq.Rq
 import com.back.global.rsData.RsData
 import com.back.standard.extensions.getOrThrow
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
+import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -16,17 +19,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/members")
 public class ApiV1MemberController(
-    private val memberService: MemberService
+    private val memberService: MemberService,
+    private val rq: Rq
 ) {
 
+    @GetMapping("/me-temp")
+    fun meTemp(): String {
+        return "temp-string"
+    }
+
     @GetMapping("/me")
-    fun me(): MemberDto {
-        return memberService
-            .findByUsername("user1")
-            .getOrThrow()
-            .let {
-            MemberDto(it)
-        }
+    fun me(req: HttpServletRequest): RsData<MemberDto> {
+        val member = rq.member
+
+        return RsData(
+            resultCode = "200-1",
+            msg = "OK",
+            data = MemberDto(member)
+        )
     }
 
     class MemberLoginResBody(
