@@ -12,8 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.servlet.NoHandlerFoundException
-import org.springframework.web.servlet.resource.NoResourceFoundException
-import java.util.stream.Collectors
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -31,8 +29,8 @@ class GlobalExceptionHandler {
             )
     }
 
-    @ExceptionHandler(NoResourceFoundException::class)
-    fun handle(ex: NoResourceFoundException): ResponseEntity<RsData<Empty>> {
+    @ExceptionHandler(NoHandlerFoundException::class)
+    fun handle(ex: NoHandlerFoundException): ResponseEntity<RsData<Empty>> {
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(
@@ -54,7 +52,6 @@ class GlobalExceptionHandler {
             .map { it.field + "-" + it.code + "-" + it.defaultMessage }
             .sorted()
             .joinToString("\n")
-
 
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
@@ -89,19 +86,5 @@ class GlobalExceptionHandler {
         return ResponseEntity
             .status(rsData.statusCode)
             .body(rsData)
-    }
-
-    @ExceptionHandler(NoHandlerFoundException::class)
-    fun handle(ex: NoHandlerFoundException): ResponseEntity<RsData<Empty>> {
-        return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(
-                RsData(
-                    "404-1",
-                    "잘못된 엔드포인트 입니다." + ex.message
-                        ?.let { " : $it" }
-                        .getOrDefault("")
-                )
-            )
     }
 }
