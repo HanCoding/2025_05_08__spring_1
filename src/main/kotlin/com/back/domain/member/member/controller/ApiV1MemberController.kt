@@ -64,7 +64,7 @@ public class ApiV1MemberController(
         if (member.password != reqBody.password) {
             throw ServiceException("400-2", "비밀번호가 일치하지 않습니다.")
         }
-        val accessToken = authTokenService.genAccessToken(member)
+        val accessToken = rq.makeAuthCookies(member)
 
         return RsData(
             resultCode = "200-1",

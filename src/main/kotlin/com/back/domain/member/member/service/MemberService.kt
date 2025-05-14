@@ -1,6 +1,5 @@
 package com.back.domain.member.member.service
 
-import com.back.domain.member.member.dto.MemberDto
 import com.back.domain.member.member.entity.Member
 import com.back.domain.member.member.repository.MemberRepository
 import com.back.standard.search.MemberSearchKeywordTypeV1
@@ -13,6 +12,7 @@ import java.util.UUID
 
 @Service
 class MemberService (
+    private val authTokenService: AuthTokenService,
     private val memberRepository: MemberRepository
 ){
     fun count() : Long {
@@ -82,5 +82,27 @@ class MemberService (
 
     fun findByApiKey(apiKey: String): Member? {
         return memberRepository.findByApiKey(apiKey)
+    }
+
+    fun getMemberFromAccessToken(accessToken: String): Member? {
+        val payload = authTokenService.payload(accessToken) ?: return null
+
+        val id = payload["id"] as Long
+        val username = payload["username"] as String
+        val nickname = payload["nickname"] as String
+
+        val member = Member(
+            id = id,
+            username = username,
+            password = "",
+            nickname = nickname,
+            apiKey = ""
+        )
+
+        return member
+    }
+
+    fun getAccessToken(member: Member): String {
+        return authTokenService.genAccessToken(member)
     }
 }
