@@ -6,6 +6,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 @Entity
 class Member(
@@ -21,4 +23,22 @@ class Member(
     override fun toString(): String {
         return "Member(username='$username', password='$password', name='$nickname')"
     }
+
+    val authoritiesAsStringList: List<String>
+        get() {
+            val authorities: MutableList<String> = ArrayList()
+
+            if (isAdmin) authorities.add("ROLE_ADMIN")
+
+            return authorities
+        }
+
+    val authorities: Collection<GrantedAuthority>
+        get() = authoritiesAsStringList
+            .stream()
+            .map { SimpleGrantedAuthority(it) }
+            .toList()
+
+    val isAdmin: Boolean
+        get() = "admin" == username || "system" == username
 }
