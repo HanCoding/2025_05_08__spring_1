@@ -9,6 +9,7 @@ import jakarta.persistence.Id
 
 @Entity
 class Member(
+    id: Long = 0,
     @Column(nullable = false, unique = true)
     val username: String,
     @Column(nullable = false)
@@ -16,7 +17,7 @@ class Member(
     @Column(nullable = false)
     var nickname: String,
     var apiKey: String
-) : BaseTime(){
+) : BaseTime(id){
     override fun toString(): String {
         return "Member(username='$username', password='$password', name='$nickname')"
     }

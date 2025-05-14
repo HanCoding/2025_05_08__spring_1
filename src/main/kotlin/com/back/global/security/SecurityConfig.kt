@@ -3,6 +3,7 @@ package com.back.global.security
 import com.back.global.rsData.RsData
 import com.back.standard.base.Empty
 import com.back.standard.util.Ut
+import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -13,6 +14,7 @@ import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.util.matcher.DispatcherTypeRequestMatcher
 
 @Configuration
 class SecurityConfig(
@@ -21,6 +23,8 @@ class SecurityConfig(
     @Bean
     fun baseSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
+            securityMatcher(DispatcherTypeRequestMatcher(DispatcherType.REQUEST))
+
             authorizeHttpRequests {
                 authorize(HttpMethod.GET, "/api/*/posts/{id:\\d+}", permitAll)
                 authorize(HttpMethod.GET, "/api/*/posts", permitAll)

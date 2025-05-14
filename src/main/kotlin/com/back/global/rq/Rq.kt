@@ -28,7 +28,7 @@ class Rq(
             .getContext().authentication
             ?.principal
             ?.let { it as SecurityUser }
-            ?.let { memberService.findById(it.id) }
+            ?.let { Member(it.id, it.username, "", it.nickname, "") }
             ?: throw ServiceException("401-1", "인증정보가 필요합니다.")
     }
 
