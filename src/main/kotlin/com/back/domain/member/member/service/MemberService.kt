@@ -102,7 +102,11 @@ class MemberService (
         return member
     }
 
-    fun getAccessToken(member: Member): String {
+    fun genAccessToken(member: Member): String {
         return authTokenService.genAccessToken(member)
+    }
+
+    fun genAuthIntegrationToken(member: Member): String {
+        return "${member.apiKey} ${genAccessToken(member)}"
     }
 }

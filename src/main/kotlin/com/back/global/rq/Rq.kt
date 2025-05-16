@@ -89,13 +89,13 @@ class Rq(
     }
 
     fun refreshAccessToken(member: Member) {
-        val newAccessToken = memberService.getAccessToken(member)
+        val newAccessToken = memberService.genAccessToken(member)
         setHeader(HttpHeaders.AUTHORIZATION, "Bearer ${member.apiKey} $newAccessToken")
         setCookie("accessToken", newAccessToken)
     }
 
     fun makeAuthCookies(member: Member): String {
-        val accessToken = memberService.getAccessToken(member)
+        val accessToken = memberService.genAccessToken(member)
         setCookie("apiKey", member.apiKey)
         setCookie("accessToken", accessToken)
         return accessToken

@@ -3,7 +3,10 @@ package com.back.global.security
 import com.back.domain.member.member.entity.Member
 import com.back.domain.member.member.service.MemberService
 import com.back.global.rq.Rq
+import com.back.global.rsData.RsData
+import com.back.standard.base.Empty
 import com.back.standard.extensions.getOrThrow
+import com.back.standard.util.Ut
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -74,14 +77,30 @@ class CustomAuthenticationFilter(
         if (member == null) {
             member = refreshAccessTokenByApiKey(apiKey)
         }
+
+        if (member == null) {
+            response.status = HttpServletResponse.SC_UNAUTHORIZED
+            response.writer.write(
+                Ut.json.toString(
+                    RsData(
+                        "401-1",
+                        "사용자 인증정보가 올바르지 않습니다.",
+                        Empty()
+                    )
+                )
+            )
+
+            return
+        }
+
         // 시큐리티에게 현재 요청은 인증된 사용자의 요청이라는 것을 알림
         rq.setLogin(member)
 
         filterChain.doFilter(request, response)
     }
 
-    private fun refreshAccessTokenByApiKey(apiKey: String): Member {
-        val member = memberService.findByApiKey(apiKey).getOrThrow()
+    private fun refreshAccessTokenByApiKey(apiKey: String): Member? {
+        val member = memberService.findByApiKey(apiKey) ?: return null
         refreshAccessToken(member)
         return member
     }
