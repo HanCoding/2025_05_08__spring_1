@@ -316,7 +316,7 @@ class ApiV1MemberControllerTest {
         val resultActions = mvc
             .perform(
                 get("/api/v1/members/me")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer user1")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer user1 EMPTY")
             )
             .andDo(MockMvcResultHandlers.print())
 
@@ -399,8 +399,8 @@ class ApiV1MemberControllerTest {
             .andDo(MockMvcResultHandlers.print())
 
         resultActions
-            .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.resultCode").value("404-1"))
-            .andExpect(jsonPath("$.msg").value(containsString("해당 엔드포인트는 존재하지 않습니다.")))
+            .andExpect(status().isUnauthorized)
+            .andExpect(jsonPath("$.resultCode").value("401-1"))
+            .andExpect(jsonPath("$.msg").value(containsString("사용자 인증정보가 올바르지 않습니다.")))
     }
 }
